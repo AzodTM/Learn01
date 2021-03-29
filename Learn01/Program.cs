@@ -23,9 +23,7 @@ namespace Learn01
                     catch (Exception ex)
                     {
                         Console.Clear();
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
+                        Console.Error.Write(ex);
                     }
                 }
             }
