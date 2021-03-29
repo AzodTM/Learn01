@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Learn01": {
+      "commandName": "Project"
+    },
+    "WSL 2": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "newProfile1": {
+      "commandName": "Executable"
+    }
+  }
+}
