@@ -28,11 +28,29 @@ namespace Learn02
 
 
             }
+            Console.WriteLine("NOD = {0}",calculateNOD(numbers[0], numbers[1]));
+            Console.WriteLine("NOK = {0}",CalculateNOK(numbers[0], numbers[1]));
+        }
+        
+        static decimal calculateNOD(decimal firstValue, decimal secondValue)
+        {
+                       
+            if (secondValue < 0)
+                secondValue = -secondValue;
+            if (firstValue < 0)
+                firstValue = -firstValue;
+            while (secondValue > 0)
+            {
+                decimal temp = secondValue;
+                secondValue = firstValue % secondValue;
+                firstValue = temp;
+            }
+            return firstValue;
+        }
 
-
-
-
-            
+        static decimal CalculateNOK(decimal firstValue, decimal secondValue)
+        {
+            return Math.Abs(firstValue * secondValue) / calculateNOD(firstValue, secondValue);
         }
     }
 }
