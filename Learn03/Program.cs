@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Learn03
 {
@@ -7,38 +8,122 @@ namespace Learn03
 
         static void Main(string[] args)
         {
-            string expression = "";
-            decimal test = 0;
             
-
+            
+            Stack<char> operatorStack = new Stack<char>();
+                        
             while(true)
-            {                
-                Console.WriteLine("THE CALC!");
-                
+            {
+                List<object> expression = ConvertStrinToListObj();
 
-                bool inputIsCorect = false;
-                while (!inputIsCorect)
+
+
+                foreach (object item in expression)
                 {
-                    expression = Console.ReadLine();
-                    foreach (char symvol in expression)
-                    { 
-                        if(((int)symvol > 47 && (int)symvol < 58) || (int)symvol == 44)
+                    Console.Write(item + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        private static List<object> ConvertStrinToListObj()
+        {
+            List<object> expression = new List<object>();
+            Console.WriteLine("Enter expression");
+            string userExpression = Console.ReadLine().Replace(" ",string.Empty);            
+            double number = 0;
+            try
+            {
+                foreach (char symvol in userExpression)
+                {
+                    if (symvol >= '0' && symvol <= '9')
+                    {
+                        if (number == 0)
                         {
-                            inputIsCorect = true;
+                            number = symvol - '0';
                         }
                         else
                         {
-                            inputIsCorect = false;
-                            break;
+                            number = number * 10 + (symvol - '0');
                         }
-                        
-                    }
-                    
-                }
-                Console.WriteLine(test);
-               
 
+                    }
+                    else if (symvol == '+' || symvol == '-' || symvol == '/' || symvol == '*' || symvol == '(' || symvol == ')')
+                    {
+                        expression.Add(number);
+                        expression.Add(symvol);
+                        number = 0;
+                    }
+                    else if (symvol == '=')
+                    {
+                        expression.Add(number);
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+            }
+            return expression;
+        }
+
+        static double MathAction(double firstNumber, double secondNumber, char operationSign)
+        {
+            switch(operationSign)
+            {
+                case '+':
+                    try
+                    {
+                        return firstNumber + secondNumber; 
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.Error.Write(ex);
+                    }
+                    break;
+
+                case '-':
+                    try
+                    {
+                        return firstNumber - secondNumber;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.Write(ex);
+                    }
+                    break;
+                case '*':
+                    try
+                    {
+                        return firstNumber * secondNumber;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.Write(ex);
+                    }
+                    break;
+                case '/':
+                    try
+                    {
+                        return firstNumber / secondNumber;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.Write(ex);
+                    }
+                    break;
+                case '^':
+                    try
+                    {
+                        return Math.Pow(firstNumber, secondNumber);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.Write(ex);
+                    }
+                    break;
+            }
+            return 0;
         }
     }
 }
