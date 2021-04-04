@@ -16,13 +16,15 @@ namespace Learn03
             {
                 List<object> expression = ConvertStrinToListObj();
 
+                Console.WriteLine("try parse HERE");
+                
 
 
                 foreach (object item in expression)
                 {
                     Console.Write(item + " ");
                 }
-                Console.WriteLine();в
+                Console.WriteLine();
             }
         }
 
@@ -34,19 +36,28 @@ namespace Learn03
             double number = 0;
             try
             {
-                foreach (char symvol in userExpression)
+                for (int i = 0; i < userExpression.Length; i++)
+                {
+                    if (userExpression[i] >= '0' && userExpression[i] <= '9')
+                    {
+                        number = number * 10 + (userExpression[i] - '0');
+                    }
+                    else if (userExpression[i] == '+' || userExpression[i] == '-' || userExpression[i] == '/' || userExpression[i] == '*' || userExpression[i] == '(' || userExpression[i] == ')')
+                    {
+                        expression.Add(number);
+                        expression.Add(userExpression[i]);
+                        number = 0;
+                    }
+                    else if (userExpression[i] == '=')
+                    {
+                        expression.Add(number);
+                    }
+                }
+                /*foreach (char symvol in userExpression)
                 {
                     if (symvol >= '0' && symvol <= '9')
-                    {
-                        if (number == 0)
-                        {
-                            number = symvol - '0';
-                        }
-                        else
-                        {
-                            number = number * 10 + (symvol - '0');
-                        }
-
+                    {                        
+                        number = number * 10 + (symvol - '0');
                     }
                     else if (symvol == '+' || symvol == '-' || symvol == '/' || symvol == '*' || symvol == '(' || symvol == ')')
                     {
@@ -58,7 +69,7 @@ namespace Learn03
                     {
                         expression.Add(number);
                     }
-                }
+                }*/
             }
             catch (Exception ex)
             {
