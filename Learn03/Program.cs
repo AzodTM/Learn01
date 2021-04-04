@@ -22,7 +22,7 @@ namespace Learn03
                 {
                     Console.Write(item + " ");
                 }
-                Console.WriteLine();
+                Console.WriteLine();в
             }
         }
 
