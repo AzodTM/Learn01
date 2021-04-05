@@ -8,22 +8,31 @@ namespace Learn03
 
         static void Main(string[] args)
         {
-            
-            
+
+
             Stack<char> operatorStack = new Stack<char>();
-                        
-            while(true)
+
+            while (true)
             {
-                List<object> expression = ConvertStrinToListObj();
-
-                Console.WriteLine("try parse HERE");
-                
-
-
-                foreach (object item in expression)
+                try
                 {
-                    Console.Write(item + " ");
+                    List<object> expression = ConvertStrinToListObj();
+                    Console.WriteLine("Show result");
+                    foreach (object item in expression)
+                    {
+                        Console.Write(item + " ");
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine(ex);
+                }
+
+
+
+
+
+
                 Console.WriteLine();
             }
         }
@@ -32,62 +41,66 @@ namespace Learn03
         {
             List<object> expression = new List<object>();
             Console.WriteLine("Enter expression");
-            string userExpression = Console.ReadLine().Replace(" ",string.Empty);            
+            string userExpression = Console.ReadLine().Replace(" ", string.Empty);
             double number = 0;
-            try
+            int countRightBreckets = 0;
+            int countLeftBreckets = 0;
+            int countEqualitySign = 0;
+
+            for (int i = 0; i < userExpression.Length; i++)
             {
-                for (int i = 0; i < userExpression.Length; i++)
+                if (userExpression[i] >= '0' && userExpression[i] <= '9')
                 {
-                    if (userExpression[i] >= '0' && userExpression[i] <= '9')
-                    {
-                        number = number * 10 + (userExpression[i] - '0');
-                    }
-                    else if (userExpression[i] == '+' || userExpression[i] == '-' || userExpression[i] == '/' || userExpression[i] == '*' || userExpression[i] == '(' || userExpression[i] == ')')
-                    {
-                        expression.Add(number);
-                        expression.Add(userExpression[i]);
-                        number = 0;
-                    }
-                    else if (userExpression[i] == '=')
-                    {
-                        expression.Add(number);
-                    }
+                    number = number * 10 + (userExpression[i] - '0');
                 }
-                /*foreach (char symvol in userExpression)
+                else if (userExpression[i] == '+' || userExpression[i] == '-' || userExpression[i] == '/'
+                    || userExpression[i] == '*' || userExpression[i] == '(' || userExpression[i] == ')' || userExpression[i] == '^')
                 {
-                    if (symvol >= '0' && symvol <= '9')
-                    {                        
-                        number = number * 10 + (symvol - '0');
-                    }
-                    else if (symvol == '+' || symvol == '-' || symvol == '/' || symvol == '*' || symvol == '(' || symvol == ')')
+                    if (userExpression[i] == '(')
                     {
-                        expression.Add(number);
-                        expression.Add(symvol);
-                        number = 0;
+                        countLeftBreckets++;
                     }
-                    else if (symvol == '=')
+                    else if (userExpression[i] == ')')
                     {
-                        expression.Add(number);
+                        countRightBreckets++;
                     }
-                }*/
+                    expression.Add(number);
+                    expression.Add(userExpression[i]);
+                    number = 0;
+                }
+                else if (userExpression[i] == '=')
+                {
+                    countEqualitySign++;
+                    expression.Add(number);
+                }
+                else
+                {
+                    throw new Exception("Bad signs");
+                }
             }
-            catch (Exception ex)
+
+            if (countLeftBreckets != countRightBreckets)
             {
-                Console.Error.WriteLine(ex);
+                throw new Exception("Wrong number of brackets");
             }
+            else if (countEqualitySign != 1)
+            {
+                throw new Exception("Wrong number of Eqality sing");
+            }
+
             return expression;
         }
 
         static double MathAction(double firstNumber, double secondNumber, char operationSign)
         {
-            switch(operationSign)
+            switch (operationSign)
             {
                 case '+':
                     try
                     {
-                        return firstNumber + secondNumber; 
+                        return firstNumber + secondNumber;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.Error.Write(ex);
                     }
