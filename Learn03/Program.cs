@@ -14,6 +14,8 @@ namespace Learn03
 
             while (true)
             {
+
+                //Пытаемся конвертировать введенные пользователем данные в осмысленый пример
                 try
                 {
                     List<object> expression = ConvertStrinToListObj();
@@ -43,18 +45,95 @@ namespace Learn03
             Console.WriteLine("Enter expression");
             string userExpression = Console.ReadLine().Replace(" ", string.Empty);
             double number = 0;
+            bool addNumber = false; //проверка был ли добавлен цифровой символ в итерации цикла
+            bool addOperator = false; //проверка был ли добавлен последним символом оператор (не считая скобок)
+            bool addDot = false; //проверка была ли установлена точка в числе которое сейчас считывается
+            bool isNegativeNumber = false;
+            int countDecimalCounter = -1;
             int countRightBreckets = 0;
             int countLeftBreckets = 0;
             int countEqualitySign = 0;
 
             for (int i = 0; i < userExpression.Length; i++)
             {
+                
+
                 if (userExpression[i] >= '0' && userExpression[i] <= '9')
                 {
-                    number = number * 10 + (userExpression[i] - '0');
+                    if (addDot)
+                    {                       
+                        number += ((userExpression[i] - '0') * Math.Pow(10, countDecimalCounter--));
+                    }
+                    else
+                    {
+                        number = number * 10 + (userExpression[i] - '0');
+                    }
+                    addOperator = false;
+                    addNumber = true;
                 }
-                else if (userExpression[i] == '+' || userExpression[i] == '-' || userExpression[i] == '/'
-                    || userExpression[i] == '*' || userExpression[i] == '(' || userExpression[i] == ')' || userExpression[i] == '^')
+                else if(userExpression[i] == '.')
+                {
+                    if (addDot)
+                    {
+                        throw new Exception("Double dot in number");
+                    }
+                    else if (addNumber)
+                    {
+                        if(number % 1 < 1)
+                        {
+                            addDot = true;
+                        }
+                    }
+                    else 
+                    {
+                        throw new Exception("incorrect location of dots");
+                    }
+                }
+
+                else if (userExpression[i] == '+' || userExpression[i] == '-' || userExpression[i] == '/' || userExpression[i] == '\\'
+                    || userExpression[i] == '*' ||  userExpression[i] == '^')
+                {
+                    if (userExpression[i] == '-')
+                    {
+                        if (i == 0)
+                        {
+                            isNegativeNumber = true;
+                            continue;
+                        }
+                        else if (userExpression[i - 1] < '0' || userExpression[i - 1] > '9')
+                        {
+                            isNegativeNumber = true;
+                            continue;
+
+                        }
+                        
+                    }
+                    else if (i == 0)
+                    {
+                        throw new Exception("Operefor first sign");
+                    }
+                    else if (addOperator)
+                    {
+                        throw new Exception("two operators in a row");
+                    }
+                    else if (addNumber)
+                    {
+                        if (isNegativeNumber)
+                        {
+                            number *= (-1);
+                            isNegativeNumber = false;
+                        }
+                        expression.Add(number);
+                        addOperator = true;
+                        addNumber = false;
+                    }
+                    expression.Add(userExpression[i]);
+                    number = 0;
+                    countDecimalCounter = -1;
+                    addDot = false;
+
+                }
+                else if(userExpression[i] == '(' || userExpression[i] == ')')
                 {
                     if (userExpression[i] == '(')
                     {
@@ -63,19 +142,46 @@ namespace Learn03
                     else if (userExpression[i] == ')')
                     {
                         countRightBreckets++;
+                        if (countRightBreckets > countLeftBreckets)
+                        {
+                            throw new Exception("Incorrect brackets");
+                        }
                     }
-                    expression.Add(number);
+                    if (addNumber)
+                    {
+                        if (isNegativeNumber)
+                        {
+                            number *= (-1);
+                            isNegativeNumber = false;
+                        }
+                        expression.Add(number);
+                        addNumber = false;
+                    }
                     expression.Add(userExpression[i]);
                     number = 0;
+                    countDecimalCounter = -1;
+                    addDot = false;
                 }
                 else if (userExpression[i] == '=')
                 {
+                    if (addOperator)
+                    {
+                        throw new Exception("Error in operator berore Eqality sign");
+                    }                    
                     countEqualitySign++;
-                    expression.Add(number);
+                    if (addNumber)
+                    {
+                        if (isNegativeNumber)
+                        {
+                            number *= (-1);
+                            isNegativeNumber = false;
+                        }
+                        expression.Add(number);
+                    }
                 }
                 else
                 {
-                    throw new Exception("Bad signs");
+                    throw new Exception("Invalid signs in expression");
                 }
             }
 
@@ -85,7 +191,7 @@ namespace Learn03
             }
             else if (countEqualitySign != 1)
             {
-                throw new Exception("Wrong number of Eqality sing");
+                throw new Exception("Wrong number of Eqality sign");
             }
 
             return expression;
