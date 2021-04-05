@@ -112,7 +112,8 @@ namespace Learn03
                     {
                         throw new Exception("Operefor first sign");
                     }
-                    else if (addOperator)
+                    
+                    if (addOperator)
                     {
                         throw new Exception("two operators in a row");
                     }
@@ -156,6 +157,11 @@ namespace Learn03
                         }
                         expression.Add(number);
                         addNumber = false;
+                    }
+                    if (isNegativeNumber)
+                    {
+                        number *= (-1);
+                        isNegativeNumber = false;
                     }
                     expression.Add(userExpression[i]);
                     number = 0;
