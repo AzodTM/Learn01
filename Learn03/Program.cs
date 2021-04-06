@@ -18,12 +18,18 @@ namespace Learn03
                 //Пытаемся конвертировать введенные пользователем данные в осмысленый пример
                 try
                 {
-                    List<object> expression = ConvertStrinToListObj();
+                    ///ввод примера пользовалетем и проверка на ощибки
+                    Console.WriteLine("Enter expression");
+                    List<object> expression = ConvertStrinToListObj(Console.ReadLine().Replace(" ", string.Empty));
+
+                    ///отрисовка примера
                     Console.WriteLine("Show result");
                     foreach (object item in expression)
                     {
-                        Console.Write(item + " ");
+                        Console.WriteLine(item + " = " + item.GetType());
+                        Console.WriteLine(item.GetType() == typeof(char));
                     }
+
                 }
                 catch (Exception ex)
                 {
@@ -38,16 +44,19 @@ namespace Learn03
                 Console.WriteLine();
             }
         }
-
-        private static List<object> ConvertStrinToListObj()
+        /// <summary>
+        /// Этот монстр обрабатывает данные введенные пользователем и возвращает осмысленный пример
+        /// Каждое число (положительно или отрицательное) знак действия и скобка - это отдельный объект
+        /// </summary>
+        /// <returns></returns>
+        private static List<object> ConvertStrinToListObj(string userExpression)
         {
             List<object> expression = new List<object>();
-            Console.WriteLine("Enter expression");
-            string userExpression = Console.ReadLine().Replace(" ", string.Empty);
+
             double number = 0;
-            bool addNumber = false; //проверка был ли добавлен цифровой символ в итерации цикла
-            bool addOperator = false; //проверка был ли добавлен последним символом оператор (не считая скобок)
-            bool addDot = false; //проверка была ли установлена точка в числе которое сейчас считывается
+            bool addedNumber = false; //проверка был ли добавлен цифровой символ в итерации цикла
+            bool addedOperator = false; //проверка был ли добавлен последним символом оператор (не считая скобок)
+            bool addedDot = false; //проверка была ли установлена точка в числе которое сейчас считывается
             bool isNegativeNumber = false;
             int countDecimalCounter = -1;
             int countRightBreckets = 0;
@@ -56,42 +65,50 @@ namespace Learn03
 
             for (int i = 0; i < userExpression.Length; i++)
             {
-                
+
 
                 if (userExpression[i] >= '0' && userExpression[i] <= '9')
                 {
-                    if (addDot)
-                    {                       
+                    try
+                    {
+                        if (userExpression[i - 1] == ')')
+                        {
+                            expression.Add('*');
+                        }
+                    }
+                    catch { };
+                    if (addedDot)
+                    {
                         number += ((userExpression[i] - '0') * Math.Pow(10, countDecimalCounter--));
                     }
                     else
                     {
                         number = number * 10 + (userExpression[i] - '0');
                     }
-                    addOperator = false;
-                    addNumber = true;
+                    addedOperator = false;
+                    addedNumber = true;
                 }
-                else if(userExpression[i] == '.')
+                else if (userExpression[i] == '.')
                 {
-                    if (addDot)
+                    if (addedDot)
                     {
                         throw new Exception("Double dot in number");
                     }
-                    else if (addNumber)
+                    else if (addedNumber)
                     {
-                        if(number % 1 < 1)
+                        if (number % 1 < 1)
                         {
-                            addDot = true;
+                            addedDot = true;
                         }
                     }
-                    else 
+                    else
                     {
                         throw new Exception("incorrect location of dots");
                     }
                 }
 
                 else if (userExpression[i] == '+' || userExpression[i] == '-' || userExpression[i] == '/' || userExpression[i] == '\\'
-                    || userExpression[i] == '*' ||  userExpression[i] == '^')
+                    || userExpression[i] == '*' || userExpression[i] == '^')
                 {
                     if (userExpression[i] == '-')
                     {
@@ -102,22 +119,29 @@ namespace Learn03
                         }
                         else if (userExpression[i - 1] < '0' || userExpression[i - 1] > '9')
                         {
+                            if (isNegativeNumber)
+                            {
+                                throw new Exception("So more minus");
+                            }
+                            else if (addedOperator)
+                            {
+                                throw new Exception("So more minus");
+                            }
                             isNegativeNumber = true;
                             continue;
-
                         }
-                        
+
                     }
                     else if (i == 0)
                     {
                         throw new Exception("Operefor first sign");
                     }
-                    
-                    if (addOperator)
+
+                    if (addedOperator)
                     {
                         throw new Exception("two operators in a row");
                     }
-                    else if (addNumber)
+                    else if (addedNumber)
                     {
                         if (isNegativeNumber)
                         {
@@ -125,20 +149,31 @@ namespace Learn03
                             isNegativeNumber = false;
                         }
                         expression.Add(number);
-                        addOperator = true;
-                        addNumber = false;
+                        addedOperator = true;
+                        addedNumber = false;
                     }
                     expression.Add(userExpression[i]);
                     number = 0;
+                    addedOperator = true;
+                    addedNumber = false;
                     countDecimalCounter = -1;
-                    addDot = false;
+                    addedDot = false;
 
                 }
-                else if(userExpression[i] == '(' || userExpression[i] == ')')
+                else if (userExpression[i] == '(' || userExpression[i] == ')')
                 {
                     if (userExpression[i] == '(')
                     {
                         countLeftBreckets++;
+                        try
+                        {
+                            if (userExpression[i - 1] == ')')
+                            {
+                                expression.Add('*');
+                            }
+                        }
+                        catch { };
+
                     }
                     else if (userExpression[i] == ')')
                     {
@@ -147,8 +182,12 @@ namespace Learn03
                         {
                             throw new Exception("Incorrect brackets");
                         }
+                        else if (addedOperator)
+                        {
+                            throw new Exception("Incorrect operator before close bracket");
+                        }
                     }
-                    if (addNumber)
+                    if (addedNumber)
                     {
                         if (isNegativeNumber)
                         {
@@ -156,26 +195,31 @@ namespace Learn03
                             isNegativeNumber = false;
                         }
                         expression.Add(number);
-                        addNumber = false;
+                        if (userExpression[i] == '(')
+                        {
+                            expression.Add('*');
+                        }
+                        addedNumber = false;
                     }
-                    if (isNegativeNumber)
-                    {
-                        number *= (-1);
-                        isNegativeNumber = false;
-                    }
+
                     expression.Add(userExpression[i]);
                     number = 0;
                     countDecimalCounter = -1;
-                    addDot = false;
+                    addedDot = false;
+                    addedOperator = false;
                 }
                 else if (userExpression[i] == '=')
                 {
-                    if (addOperator)
+                    if (i != userExpression.Length - 1)
                     {
-                        throw new Exception("Error in operator berore Eqality sign");
-                    }                    
+                        throw new Exception("Equality sign is not last");
+                    }
+                    else if (addedOperator)
+                    {
+                        throw new Exception("Error in operator berore Equlity sign");
+                    }
                     countEqualitySign++;
-                    if (addNumber)
+                    if (addedNumber)
                     {
                         if (isNegativeNumber)
                         {
@@ -203,63 +247,103 @@ namespace Learn03
             return expression;
         }
 
-        static double MathAction(double firstNumber, double secondNumber, char operationSign)
+
+        /// <summary>
+        /// Конвертер инфексной нотации в обратную польскую нотацию
+        /// </summary>
+        /// <param name="infixNotation"></param>
+        /// <returns></returns>
+        private static List<object> ReversePolishNotation(List<object> infixNotation)
         {
-            switch (operationSign)
+            List<object> reversePolishNotation = new List<object>();
+            Stack<object> stackConvert = new Stack<object>();
+
+
+            foreach (object item in infixNotation)
+            {
+                if (item.GetType() == typeof(double))
+                {
+                    reversePolishNotation.Add(item);
+                }
+                else
+                {
+                    switch (item)
+                    {
+                        case '(':
+                            stackConvert.Push(item);
+                            break;
+                        case ')':
+                            while ((char)stackConvert.Peek() != '(')
+                            {
+                                reversePolishNotation.Add(stackConvert.Pop());
+                            }
+                            stackConvert.Pop();
+                            break;
+                        case '+':
+                        case '-':
+                        case '*':
+                        case '\\':
+                        case '/':
+                            switch (GetPriority((char)item))
+                            {
+                                case 1:
+                                    while (GetPriority((char)stackConvert.Peek()) >= 1)
+                                    {
+                                        reversePolishNotation.Add(stackConvert.Pop());
+                                    }
+                                    stackConvert.Push(item);
+                                    break;
+                                case 2:
+                                    while (GetPriority((char)stackConvert.Peek()) >= 2)
+                                    {
+                                        reversePolishNotation.Add(stackConvert.Pop());
+                                    }
+                                    stackConvert.Push(item);
+                                    break;
+                                case 3:
+                                    while (GetPriority((char)stackConvert.Peek()) >= 3)
+                                    {
+                                        reversePolishNotation.Add(stackConvert.Pop());
+                                    }
+                                    stackConvert.Push(item);
+                                    break;
+                            }
+                            break;
+                    }
+                }
+
+                while(stackConvert.Count > 0)
+                {
+                    reversePolishNotation.Add(stackConvert.Pop());
+                }
+
+            }
+
+            return reversePolishNotation;
+        }
+
+        /// <summary>
+        /// Назначение приоритетов операторам (чем выше тем приоритетней)
+        /// </summary>
+        /// <param name="operatorExpression"></param>
+        /// <returns></returns>
+        private static int GetPriority(char operatorExpression)
+        {
+            switch (operatorExpression)
             {
                 case '+':
-                    try
-                    {
-                        return firstNumber + secondNumber;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Error.Write(ex);
-                    }
-                    break;
-
                 case '-':
-                    try
-                    {
-                        return firstNumber - secondNumber;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Error.Write(ex);
-                    }
-                    break;
+                    return 1;
+
                 case '*':
-                    try
-                    {
-                        return firstNumber * secondNumber;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Error.Write(ex);
-                    }
-                    break;
+                case '\\':
                 case '/':
-                    try
-                    {
-                        return firstNumber / secondNumber;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Error.Write(ex);
-                    }
-                    break;
+                    return 2;
                 case '^':
-                    try
-                    {
-                        return Math.Pow(firstNumber, secondNumber);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Error.Write(ex);
-                    }
-                    break;
+                    return 3;
             }
             return 0;
         }
+
     }
 }
