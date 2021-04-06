@@ -8,10 +8,6 @@ namespace Learn03
 
         static void Main(string[] args)
         {
-
-
-            Stack<char> operatorStack = new Stack<char>();
-
             while (true)
             {
 
@@ -22,12 +18,20 @@ namespace Learn03
                     Console.WriteLine("Enter expression");
                     List<object> expression = ConvertStrinToListObj(Console.ReadLine().Replace(" ", string.Empty));
 
+                    /*
                     ///отрисовка примера
                     Console.WriteLine("Show result");
                     foreach (object item in expression)
                     {
                         Console.WriteLine(item + " = " + item.GetType());
                         Console.WriteLine(item.GetType() == typeof(char));
+                    }
+                    */
+
+                    Console.WriteLine("Revers poland notation");
+                    foreach (object item in ReversePolishNotation(expression))
+                    {
+                        Console.Write(item + " ");
                     }
 
                 }
@@ -284,41 +288,51 @@ namespace Learn03
                         case '*':
                         case '\\':
                         case '/':
-                            switch (GetPriority((char)item))
+                            if (stackConvert.Count == 0)
                             {
-                                case 1:
-                                    while (GetPriority((char)stackConvert.Peek()) >= 1)
-                                    {
-                                        reversePolishNotation.Add(stackConvert.Pop());
-                                    }
-                                    stackConvert.Push(item);
-                                    break;
-                                case 2:
-                                    while (GetPriority((char)stackConvert.Peek()) >= 2)
-                                    {
-                                        reversePolishNotation.Add(stackConvert.Pop());
-                                    }
-                                    stackConvert.Push(item);
-                                    break;
-                                case 3:
-                                    while (GetPriority((char)stackConvert.Peek()) >= 3)
-                                    {
-                                        reversePolishNotation.Add(stackConvert.Pop());
-                                    }
-                                    stackConvert.Push(item);
-                                    break;
+                                stackConvert.Push(item);
+                            }
+                            else
+                            {
+                                switch (GetPriority((char)item))
+                                {
+                                    case 1:
+
+                                        while (stackConvert.Count != 0 && GetPriority((char)stackConvert.Peek()) >= 1)
+                                        {
+                                            reversePolishNotation.Add(stackConvert.Pop());
+                                        }
+
+                                        stackConvert.Push(item);
+                                        break;
+                                    case 2:
+                                        while (stackConvert.Count != 0 && GetPriority((char)stackConvert.Peek()) >= 2)
+                                        {
+                                            reversePolishNotation.Add(stackConvert.Pop());
+                                        }
+                                        stackConvert.Push(item);
+                                        break;
+                                    case 3:
+                                        while (stackConvert.Count != 0 && GetPriority((char)stackConvert.Peek()) >= 3)
+                                        {
+                                            reversePolishNotation.Add(stackConvert.Pop());
+                                        }
+                                        stackConvert.Push(item);
+                                        break;
+                                }
                             }
                             break;
+                        
                     }
                 }
 
-                while(stackConvert.Count > 0)
-                {
-                    reversePolishNotation.Add(stackConvert.Pop());
-                }
+                
 
             }
-
+            while (stackConvert.Count > 0)
+            {
+                reversePolishNotation.Add(stackConvert.Pop());
+            }
             return reversePolishNotation;
         }
 
