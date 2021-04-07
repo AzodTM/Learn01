@@ -18,7 +18,7 @@ namespace Learn03
                 {
                     ///ввод примера пользовалетем и проверка на ощибки
                     Console.WriteLine("Enter expression");
-                    expression = ConvertStrinToListObj(Console.ReadLine().Replace(" ", string.Empty));
+                    expression = ConvertStrinToListObj(Console.ReadLine());
 
 
                     ///отрисовка примера в инфиксной нотации
@@ -58,13 +58,6 @@ namespace Learn03
                     Console.ResetColor();
                 }
 
-
-               
-
-
-
-
-
                 Console.WriteLine();
             }
         }
@@ -81,6 +74,7 @@ namespace Learn03
             bool addedNumber = false; //проверка был ли добавлен цифровой символ в итерации цикла
             bool addedOperator = false; //проверка был ли добавлен последним символом оператор (не считая скобок)
             bool addedDot = false; //проверка была ли установлена точка в числе которое сейчас считывается
+            bool addedSpase = false; //Проверка был ли добавлен пробел
             bool isNegativeNumber = false;
             int countDecimalCounter = -1;
             int countRightBreckets = 0;
@@ -109,8 +103,29 @@ namespace Learn03
                     {
                         number = number * 10 + (userExpression[i] - '0');
                     }
+                    if (i > 1)
+                    {
+                        if(addedSpase && addedNumber)
+                        {
+                            throw new Exception("Space between numbers");
+                        }
+                    }
                     addedOperator = false;
                     addedNumber = true;
+                }
+                else if(userExpression[i] == ' ')
+                {
+                    if (addedSpase)
+                    {
+                        throw new Exception("Double spase");
+                    }
+                    else if(i == 0)
+                    {
+                        throw new Exception("Space is first sign");
+                    }
+                    
+                    addedSpase = true;
+
                 }
                 else if (userExpression[i] == '.')
                 {
@@ -134,6 +149,8 @@ namespace Learn03
                 else if (userExpression[i] == '+' || userExpression[i] == '-' || userExpression[i] == '/' || userExpression[i] == '\\'
                     || userExpression[i] == '*' || userExpression[i] == '^')
                 {
+                    addedSpase = false;
+
                     if (userExpression[i] == '-')
                     {
                         if (i == 0)
@@ -184,8 +201,11 @@ namespace Learn03
                     addedDot = false;
 
                 }
+
                 else if (userExpression[i] == '(' || userExpression[i] == ')')
                 {
+                    addedSpase = false;
+
                     if (userExpression[i] == '(')
                     {
                         countLeftBreckets++;
@@ -232,6 +252,7 @@ namespace Learn03
                     addedDot = false;
                     addedOperator = false;
                 }
+
                 else if (userExpression[i] == '=')
                 {
                     if (i != userExpression.Length - 1)
@@ -253,6 +274,7 @@ namespace Learn03
                         expression.Add(number);
                     }
                 }
+
                 else
                 {
                     throw new Exception("Invalid signs in expression");
@@ -308,6 +330,7 @@ namespace Learn03
                         case '*':
                         case '\\':
                         case '/':
+                        case '^':
                             if (stackConvert.Count == 0)
                             {
                                 stackConvert.Push(item);
