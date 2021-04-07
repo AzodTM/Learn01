@@ -8,6 +8,8 @@ namespace Learn03
 
         static void Main(string[] args)
         {
+            List<object> expression = new List<object>();
+            List<object> reversePolishNotation = new List<object>();
             while (true)
             {
 
@@ -16,30 +18,48 @@ namespace Learn03
                 {
                     ///ввод примера пользовалетем и проверка на ощибки
                     Console.WriteLine("Enter expression");
-                    List<object> expression = ConvertStrinToListObj(Console.ReadLine().Replace(" ", string.Empty));
+                    expression = ConvertStrinToListObj(Console.ReadLine().Replace(" ", string.Empty));
 
-                    /*
-                    ///отрисовка примера
-                    Console.WriteLine("Show result");
+
+                    ///отрисовка примера в инфиксной нотации
+                    Console.WriteLine("\nYour expression:");
                     foreach (object item in expression)
                     {
-                        Console.WriteLine(item + " = " + item.GetType());
-                        Console.WriteLine(item.GetType() == typeof(char));
+                        if (item.GetType() == typeof(char))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write(item + " ");
+                            Console.ResetColor();
+                            
+                        }
+                        else
+                        {
+                            Console.Write(item + " ");
+                        }
                     }
-                    */
 
-                    Console.WriteLine("Revers poland notation");
-                    foreach (object item in ReversePolishNotation(expression))
+                    reversePolishNotation = ConvertInfixNotationToReversePolishNotation(expression);
+
+                    //отрисовка примера в обратной польской нотации
+                    Console.WriteLine("\nRevers poland notation:");
+                    foreach (object item in reversePolishNotation)
                     {
                         Console.Write(item + " ");
                     }
 
+                    //решение примера 
+                    Console.WriteLine("\nAnswer:");
+                    Console.WriteLine(SolutionOfExampleInReversPolishNotation(reversePolishNotation));
                 }
                 catch (Exception ex)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.Error.WriteLine(ex);
+                    Console.ResetColor();
                 }
 
+
+               
 
 
 
@@ -257,7 +277,7 @@ namespace Learn03
         /// </summary>
         /// <param name="infixNotation"></param>
         /// <returns></returns>
-        private static List<object> ReversePolishNotation(List<object> infixNotation)
+        private static List<object> ConvertInfixNotationToReversePolishNotation(List<object> infixNotation)
         {
             List<object> reversePolishNotation = new List<object>();
             Stack<object> stackConvert = new Stack<object>();
@@ -336,11 +356,13 @@ namespace Learn03
             return reversePolishNotation;
         }
 
+
         /// <summary>
         /// Назначение приоритетов операторам (чем выше тем приоритетней)
         /// </summary>
         /// <param name="operatorExpression"></param>
         /// <returns></returns>
+        /// 
         private static int GetPriority(char operatorExpression)
         {
             switch (operatorExpression)
@@ -357,6 +379,68 @@ namespace Learn03
                     return 3;
             }
             return 0;
+        }
+
+        /// <summary>
+        /// Решение примера в обратной польской нотации
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private static double SolutionOfExampleInReversPolishNotation(List<object> expression)
+        {
+            while (expression.Count != 1)
+            {
+                for (int i = 0; i < expression.Count; i++)
+                {
+                    if (expression[i].GetType() == typeof(char))
+                    {
+                        MathAction(ref expression, i);
+                        break;
+                    }
+                }
+            }
+
+            return (double)expression[0];
+        }
+
+        /// <summary>
+        /// Математическое дейтсвие над двумя числами в Обратной Польской Нотации
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="manipulator"></param>
+        private static void MathAction(ref List<object> expression, int manipulator)
+        {
+            
+            switch((char)expression[manipulator])
+            {
+                case '+':
+                    expression[manipulator - 2] = (double)expression[manipulator-2] + (double)expression[manipulator - 1];
+                    expression.RemoveAt(manipulator - 1);
+                    expression.RemoveAt(manipulator - 1);
+                    break;
+                case '-':
+                    expression[manipulator - 2] = (double)expression[manipulator - 2] - (double)expression[manipulator - 1];
+                    expression.RemoveAt(manipulator - 1);
+                    expression.RemoveAt(manipulator - 1);
+                    break;
+                case '*':
+                    expression[manipulator - 2] = (double)expression[manipulator - 2] * (double)expression[manipulator - 1];
+                    expression.RemoveAt(manipulator - 1);
+                    expression.RemoveAt(manipulator - 1);
+                    break;
+                case '/':
+                case '\\':
+                    expression[manipulator - 2] = (double)expression[manipulator - 2] / (double)expression[manipulator - 1];
+                    expression.RemoveAt(manipulator - 1);
+                    expression.RemoveAt(manipulator - 1);
+                    break;
+                case '^':
+                    expression[manipulator - 2] = Math.Pow((double)expression[manipulator - 2],(double)expression[manipulator - 1]);
+                    expression.RemoveAt(manipulator - 1);
+                    expression.RemoveAt(manipulator - 1);
+                    break;
+
+            }
         }
 
     }
