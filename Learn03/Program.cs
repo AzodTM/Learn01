@@ -50,6 +50,16 @@ namespace Learn03
                     //решение примера 
                     Console.WriteLine("\nAnswer:");
                     Console.WriteLine(SolutionOfExampleInReversPolishNotation(reversePolishNotation));
+
+                    //отрисовка всех элементов
+                    Console.WriteLine("\ntemp test print all element and type expression");
+                    foreach(object item in expression)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("item = "+item+" Type = " + item.GetType());
+                        
+                    }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -77,6 +87,7 @@ namespace Learn03
             bool addedSpase = false; //Проверка был ли добавлен пробел
             bool isNegativeNumber = false;
             bool isFunction = false; //проверка запущена ли запись функции
+            string func = ""; //Хранинеи текущей вункции
             int countDecimalCounter = -1;
             int countRightBreckets = 0;
             int countLeftBreckets = 0;
@@ -85,9 +96,102 @@ namespace Learn03
             for (int i = 0; i < userExpression.Length; i++)
             {
 
-
-                if (userExpression[i] >= '0' && userExpression[i] <= '9')
+                if(isFunction)
                 {
+                    if(userExpression[i] == 'i' || userExpression[i] == 'I')
+                    {
+                        if(func == "S")
+                        {
+                            func += "I";
+                        }
+                        else
+                        {
+                            throw new Exception("Error sign \"i\"");
+                        }
+                    }
+                    else if(userExpression[i] == 'n' || userExpression[i] == 'N')
+                    {
+                        if(func == "SI")
+                        {
+                            func += "N";
+                            expression.Add(func);
+                            func = "";
+                            isFunction = false;
+                        }
+                        else
+                        {
+                            throw new Exception("Error sign \"n\"");
+                        }
+                    }
+                    else if(userExpression[i] == 'q' || userExpression[i] == 'Q')
+                    {
+                        if (func == "S")
+                        {
+                            func += "Q";
+                        }
+                        else
+                        {
+                            throw new Exception("Error sign \"q\"");
+                        }
+                    }
+                    else if (userExpression[i] == 'r' || userExpression[i] == 'R')
+                    {
+                        if (func == "SQ")
+                        {
+                            func += "R";
+                        }
+                        else
+                        {
+                            throw new Exception("Error sign \"r\"");
+                        }
+                    }
+                    else if (userExpression[i] == 't' || userExpression[i] == 'T')
+                    {
+                        if (func == "SQR")
+                        {
+                            func += "T";
+                            expression.Add(func);
+                            func = "";
+                            isFunction = false;
+                        }
+                        else
+                        {
+                            throw new Exception("Error sign \"t\"");
+                        }
+                    }
+                    else if (userExpression[i] == 'o' || userExpression[i] == 'O')
+                    {
+                        if (func == "C")
+                        {
+                            func += "O";
+                        }
+                        else
+                        {
+                            throw new Exception("Error sign \"o\"");
+                        }
+                    }
+                    else if (userExpression[i] == 's' || userExpression[i] == 'S')
+                    {
+                        if (func == "CO")
+                        {
+                            func += "S";
+                            expression.Add(func);
+                            func = "";
+                            isFunction = false;
+                        }
+                        else
+                        {
+                            throw new Exception("Error sign \"s\"");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Wrong function");
+                    }
+                }
+                else if (userExpression[i] >= '0' && userExpression[i] <= '9')
+                {
+                    
                     try
                     {
                         if (userExpression[i - 1] == ')')
@@ -190,9 +294,7 @@ namespace Learn03
                             number *= (-1);
                             isNegativeNumber = false;
                         }
-                        expression.Add(number);
-                        addedOperator = true;
-                        addedNumber = false;
+                        expression.Add(number);                        
                     }
                     expression.Add(userExpression[i]);
                     number = 0;
@@ -206,7 +308,6 @@ namespace Learn03
                 else if (userExpression[i] == '(' || userExpression[i] == ')')
                 {
                     addedSpase = false;
-
                     if (userExpression[i] == '(')
                     {
                         countLeftBreckets++;
@@ -276,10 +377,41 @@ namespace Learn03
                     }
                 }
 
-                else if (userExpression[i] == 's' || userExpression[i] == 'S')
+                else if (userExpression[i] == 's' || userExpression[i] == 'S' || userExpression[i] == 'c' || userExpression[i] == 'C')
                 {
-                    if ((userExpression[i+1] == 'i' || userExpression[i+1] == 'I') && (suer)
+                    if(addedNumber)
+                    {
+                        if (isNegativeNumber)
+                        {
+                            number *= (-1);
+                            isNegativeNumber = false;
+                        }                        
+                        expression.Add(number);                        
+                        expression.Add('*');  
+                    }
+                    /*else if(addedOperator)
+                    {
+                        if(addedSpase && i > 1)
+                        {
+                            expression.Add(userExpression[i - 2]);
+                        }
+                        else
+                        {
+                            expression.Add(userExpression[i - 1]);
+                        }
+                                                
+                    }
+                    */
+
+                    addedNumber = false;
+                    addedOperator = false;
+                    number = 0;
+                    addedDot = false;
+                    addedSpase = false;
+                    func = userExpression[i].ToString().ToUpper();
+                    isFunction = true;
                 }
+
 
                 else
                 {
@@ -317,7 +449,7 @@ namespace Learn03
                 {
                     reversePolishNotation.Add(item);
                 }
-                else
+                else if (item.GetType() == typeof(char)) 
                 {
                     switch (item)
                     {
@@ -325,11 +457,23 @@ namespace Learn03
                             stackConvert.Push(item);
                             break;
                         case ')':
-                            while ((char)stackConvert.Peek() != '(')
+                            bool inStackPeekLeftBracket = false;
+                            while (!inStackPeekLeftBracket)
                             {
+                                
+                                if (stackConvert.Peek().GetType() == typeof(char))
+                                {
+                                    if ((char)stackConvert.Peek() == '(')
+                                    {
+                                        inStackPeekLeftBracket = true;
+                                        stackConvert.Pop();
+                                    }
+                                    
+                                }
                                 reversePolishNotation.Add(stackConvert.Pop());
                             }
-                            stackConvert.Pop();
+
+                            
                             break;
                         case '+':
                         case '-':
@@ -340,6 +484,14 @@ namespace Learn03
                             if (stackConvert.Count == 0)
                             {
                                 stackConvert.Push(item);
+                            }
+                            else if(stackConvert.Peek().GetType() == typeof(string))                                
+                            {
+                                while (stackConvert.Count != 0 && stackConvert.Peek().GetType() == typeof(string))
+                                {
+                                    reversePolishNotation.Add(stackConvert.Pop());
+                                }
+                                stackConvert.Push(item);                            
                             }
                             else
                             {
@@ -374,7 +526,22 @@ namespace Learn03
                         
                     }
                 }
-
+                else if (item.GetType() == typeof(string))
+                {
+                    if (stackConvert.Count == 0)
+                    {
+                        stackConvert.Push(item);
+                    }
+                    else
+                    {
+                        while (stackConvert.Peek().GetType() == typeof(string))
+                        {
+                            reversePolishNotation.Add(stackConvert.Pop());
+                        }
+                        stackConvert.Push(item);
+                    }
+                }
+                
                 
 
             }
@@ -421,7 +588,7 @@ namespace Learn03
             {
                 for (int i = 0; i < expression.Count; i++)
                 {
-                    if (expression[i].GetType() == typeof(char))
+                    if (expression[i].GetType() == typeof(char) || expression[i].GetType() == typeof(string))
                     {
                         MathAction(ref expression, i);
                         break;
@@ -439,36 +606,60 @@ namespace Learn03
         /// <param name="manipulator"></param>
         private static void MathAction(ref List<object> expression, int manipulator)
         {
-            
-            switch((char)expression[manipulator])
+            if (expression[manipulator].GetType() == typeof(char))
             {
-                case '+':
-                    expression[manipulator - 2] = (double)expression[manipulator-2] + (double)expression[manipulator - 1];
-                    expression.RemoveAt(manipulator - 1);
-                    expression.RemoveAt(manipulator - 1);
-                    break;
-                case '-':
-                    expression[manipulator - 2] = (double)expression[manipulator - 2] - (double)expression[manipulator - 1];
-                    expression.RemoveAt(manipulator - 1);
-                    expression.RemoveAt(manipulator - 1);
-                    break;
-                case '*':
-                    expression[manipulator - 2] = (double)expression[manipulator - 2] * (double)expression[manipulator - 1];
-                    expression.RemoveAt(manipulator - 1);
-                    expression.RemoveAt(manipulator - 1);
-                    break;
-                case '/':
-                case '\\':
-                    expression[manipulator - 2] = (double)expression[manipulator - 2] / (double)expression[manipulator - 1];
-                    expression.RemoveAt(manipulator - 1);
-                    expression.RemoveAt(manipulator - 1);
-                    break;
-                case '^':
-                    expression[manipulator - 2] = Math.Pow((double)expression[manipulator - 2],(double)expression[manipulator - 1]);
-                    expression.RemoveAt(manipulator - 1);
-                    expression.RemoveAt(manipulator - 1);
-                    break;
+                switch ((char)expression[manipulator])
+                {
+                    case '+':
+                        expression[manipulator - 2] = (double)expression[manipulator - 2] + (double)expression[manipulator - 1];
+                        expression.RemoveAt(manipulator - 1);
+                        expression.RemoveAt(manipulator - 1);
+                        break;
+                    case '-':
+                        expression[manipulator - 2] = (double)expression[manipulator - 2] - (double)expression[manipulator - 1];
+                        expression.RemoveAt(manipulator - 1);
+                        expression.RemoveAt(manipulator - 1);
+                        break;
+                    case '*':
+                        expression[manipulator - 2] = (double)expression[manipulator - 2] * (double)expression[manipulator - 1];
+                        expression.RemoveAt(manipulator - 1);
+                        expression.RemoveAt(manipulator - 1);
+                        break;
+                    case '/':
+                    case '\\':
+                        expression[manipulator - 2] = (double)expression[manipulator - 2] / (double)expression[manipulator - 1];
+                        expression.RemoveAt(manipulator - 1);
+                        expression.RemoveAt(manipulator - 1);
+                        break;
+                    case '^':
+                        expression[manipulator - 2] = Math.Pow((double)expression[manipulator - 2], (double)expression[manipulator - 1]);
+                        expression.RemoveAt(manipulator - 1);
+                        expression.RemoveAt(manipulator - 1);
+                        break;
 
+                }
+            }
+            else if(expression[manipulator].GetType() == typeof(string))
+            {
+                switch ((string)expression[manipulator])
+                {
+                    case "SIN":
+                        expression[manipulator - 1] = Math.Sin((double)expression[manipulator - 1]);
+                        expression.RemoveAt(manipulator);
+                        break;
+                    case "COS":
+                        expression[manipulator - 1] = Math.Cos((double)expression[manipulator - 1]);
+                        expression.RemoveAt(manipulator);
+                        break;
+                    case "SQRT":
+                        expression[manipulator - 1] = Math.Sqrt((double)expression[manipulator - 1]);
+                        expression.RemoveAt(manipulator);
+                        break;
+                }
+            }
+            else
+            {
+                throw new Exception("invalid type in Revers Polish Notation");
             }
         }
 
