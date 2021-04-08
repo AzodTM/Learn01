@@ -76,6 +76,7 @@ namespace Learn03
             bool addedDot = false; //проверка была ли установлена точка в числе которое сейчас считывается
             bool addedSpase = false; //Проверка был ли добавлен пробел
             bool isNegativeNumber = false;
+            bool isFunction = false; //проверка запущена ли запись функции
             int countDecimalCounter = -1;
             int countRightBreckets = 0;
             int countLeftBreckets = 0;
@@ -273,6 +274,11 @@ namespace Learn03
                         }
                         expression.Add(number);
                     }
+                }
+
+                else if (userExpression[i] == 's' || userExpression[i] == 'S')
+                {
+                    if ((userExpression[i+1] == 'i' || userExpression[i+1] == 'I') && (suer)
                 }
 
                 else
