@@ -215,6 +215,7 @@ namespace Learn03
                             throw new Exception("Space between numbers");
                         }
                     }
+                    addedSpase = false;
                     addedOperator = false;
                     addedNumber = true;
                 }
@@ -258,6 +259,21 @@ namespace Learn03
 
                     if (userExpression[i] == '-')
                     {
+                        if (addedNumber)
+                        {
+                            if (isNegativeNumber)
+                            {
+                                expression.Add(-number);
+                                
+                            }
+                            else
+                            {
+                                expression.Add(number);
+                            }
+                            isNegativeNumber = false;
+                            addedNumber = false;
+                            number = 0;
+                        }
                         if (i == 0)
                         {
                             isNegativeNumber = true;
@@ -470,7 +486,10 @@ namespace Learn03
                                     }
                                     
                                 }
-                                reversePolishNotation.Add(stackConvert.Pop());
+                                if (stackConvert.Count > 0)
+                                {
+                                    reversePolishNotation.Add(stackConvert.Pop());
+                                }
                             }
 
                             
