@@ -32,6 +32,13 @@ namespace Learn03
                             Console.ResetColor();
                             
                         }
+                        else if (item.GetType() == typeof(string))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.Write(item + " ");
+                            Console.ResetColor();
+
+                        }
                         else
                         {
                             Console.Write(item + " ");
@@ -279,7 +286,12 @@ namespace Learn03
                             isNegativeNumber = true;
                             continue;
                         }
-                        else if (userExpression[i - 1] < '0' || userExpression[i - 1] > '9')
+                        else if(userExpression[i-1]== '(')
+                        {
+                            isNegativeNumber = true;
+                            continue;
+                        }
+                        else if (addedNumber)
                         {
                             if (isNegativeNumber)
                             {
@@ -292,6 +304,7 @@ namespace Learn03
                             isNegativeNumber = true;
                             continue;
                         }
+
 
                     }
                     else if (i == 0)
@@ -615,7 +628,17 @@ namespace Learn03
                 }
             }
 
-            return (double)expression[0];
+            try
+            {
+                return (double)expression[0];
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Function Error");
+            }
+            
+
+
         }
 
         /// <summary>
