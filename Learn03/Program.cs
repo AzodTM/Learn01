@@ -10,6 +10,27 @@ namespace Learn03
         {
             List<object> expression = new List<object>();
             List<object> reversePolishNotation = new List<object>();
+
+
+
+            
+            try
+            {
+                List<object> testList = Converter.SemanticAnalisisOfStringV2("1+3-sin(4)*3");
+
+                Console.WriteLine("_______________");
+                foreach (object i in testList)
+                {
+                    Console.WriteLine(i);
+
+                }
+                Console.WriteLine("_______________");
+
+            }
+            catch(Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+            }
             while (true)
             {
 
@@ -58,6 +79,7 @@ namespace Learn03
                     Console.WriteLine("\nAnswer:");
                     Console.WriteLine(SolutionOfExampleInReversPolishNotation(reversePolishNotation));
 
+                    /*
                     //отрисовка всех элементов
                     Console.WriteLine("\ntemp test print all element and type expression");
                     foreach(object item in expression)
@@ -66,7 +88,7 @@ namespace Learn03
                         Console.WriteLine("item = "+item+" Type = " + item.GetType());
                         
                     }
-                    
+                    */
                 }
                 catch (Exception ex)
                 {
@@ -78,6 +100,12 @@ namespace Learn03
                 Console.WriteLine();
             }
         }
+
+        
+
+
+       
+
         /// <summary>
         /// Этот монстр обрабатывает данные введенные пользователем и возвращает осмысленный пример
         /// Каждое число (положительно или отрицательное) знак действия и скобка - это отдельный объект
@@ -85,6 +113,9 @@ namespace Learn03
         /// <returns></returns>
         private static List<object> ConvertStrinToListObj(string userExpression)
         {
+            
+
+
             List<object> expression = new List<object>();
 
             double number = 0;
@@ -418,19 +449,7 @@ namespace Learn03
                         expression.Add(number);                        
                         expression.Add('*');  
                     }
-                    /*else if(addedOperator)
-                    {
-                        if(addedSpase && i > 1)
-                        {
-                            expression.Add(userExpression[i - 2]);
-                        }
-                        else
-                        {
-                            expression.Add(userExpression[i - 1]);
-                        }
-                                                
-                    }
-                    */
+                   
 
                     addedNumber = false;
                     addedOperator = false;
