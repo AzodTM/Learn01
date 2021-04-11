@@ -10,27 +10,25 @@ namespace Learn03
         {
             List<object> expression = new List<object>();
             List<object> reversePolishNotation = new List<object>();
+            bool v2 = true;
 
 
-
-            
+            while(v2)
             try
             {
-                List<object> testList = Converter.SemanticAnalisisOfStringV2("1+3-sin(4)*3");
+                Console.WriteLine("enter exp");
+                expression = Analisis.ParseSyntacticAnalisis(Console.ReadLine());
 
-                Console.WriteLine("_______________");
-                foreach (object i in testList)
-                {
-                    Console.WriteLine(i);
-
-                }
-                Console.WriteLine("_______________");
+                
+                PrintConsole.ListObj(expression);
+                
 
             }
             catch(Exception ex)
             {
                 Console.Error.WriteLine(ex);
             }
+
             while (true)
             {
 
