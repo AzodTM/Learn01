@@ -15,7 +15,6 @@ namespace Learn03
         /// <param name="value"></param>
         public static void ListObj(List<object> value)
         {
-
             Console.WriteLine(new string('_', 50));
 
             foreach(object i in value)

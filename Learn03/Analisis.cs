@@ -6,7 +6,16 @@ namespace Learn03
 {
     class Analisis
     {
-                
+        [Flags]
+        public enum Status
+        {
+            AddedNumber,
+            AddedOperator,
+            AddedNegative,
+            AddedRightBracket,
+            AddedLeftBracket,
+            AddedFunction
+        }
         /// <summary>
         /// парсер строки на символы, цифры и функции
         /// </summary>
@@ -70,9 +79,11 @@ namespace Learn03
         /// </summary>
         /// <param name="userExpression"></param>
         /// <returns></returns>
-        public static List<object> SemanticAnalisis(List<object> userExpression)
+        public static List<object> SemanticAnalisis(List<object> userExpression, Status status = 0)
         {
-            throw new Exception("zaglushka"); 
+            int countRightBreckets = 0;
+            int countLeftBreckets = 0;
+            throw new Exception("zaglushka");
         }
         
     }
