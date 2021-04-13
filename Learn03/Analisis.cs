@@ -83,6 +83,27 @@ namespace Learn03
         {
             int countRightBreckets = 0;
             int countLeftBreckets = 0;
+            List<object> result = new List<object>();
+
+            foreach(object i in userExpression)
+            {
+                if(i.GetType() == typeof(string))
+                {
+                    if (status == Status.AddedRightBracket)
+                    {
+                        result.Add('*');                        
+                    }   
+                    else if(status == (Status.AddedLeftBracket | Status.AddedNegative))
+                    {
+                        result.Add(-1);
+                        result.Add('*');
+                    }
+                    status = 0;
+                    status = Status.AddedFunction;
+                }
+                result.Add(i);
+            }
+
             throw new Exception("zaglushka");
         }
         
