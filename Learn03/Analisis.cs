@@ -87,7 +87,7 @@ namespace Learn03
 
             foreach(object i in userExpression)
             {
-                if(i.GetType() == typeof(string))
+                if(i.GetType() == typeof(string) || i.GetType() == typeof(double))
                 {
                     if (status == Status.AddedRightBracket)
                     {
@@ -98,9 +98,29 @@ namespace Learn03
                         result.Add(-1);
                         result.Add('*');
                     }
+                    else if(status == Status.AddedNumber)
+                    {
+                        if(i.GetType() == typeof(double))
+                        {
+                            throw new Exception("doble number");
+                        }
+                        result.Add('*');
+                    }
+                    else if(status == Status.AddedFunction && i.GetType() == typeof(string))
+                    {
+                        throw new Exception("doble function");
+                    }
                     status = 0;
-                    status = Status.AddedFunction;
+                    if (i.GetType() == typeof(string))
+                    {
+                        status = Status.AddedFunction;
+                    }
+                    else
+                    {
+                        status = Status.AddedNumber;
+                    }
                 }
+
                 result.Add(i);
             }
 
