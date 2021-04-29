@@ -18,7 +18,7 @@ namespace Learn03
             {
                 Console.WriteLine("enter exp");
                 expression = Analisis.ParseSyntacticAnalisis(Console.ReadLine());
-                    expression = Analisis.SemanticAnalisis(expression);
+                expression = Analisis.SemanticAnalisis(expression);
 
 
                 

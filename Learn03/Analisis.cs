@@ -84,6 +84,7 @@ namespace Learn03
             int countRightBreckets = 0;
             int countLeftBreckets = 0;
             List<object> result = new List<object>();
+            
 
             foreach(object i in userExpression)
             {
