@@ -91,7 +91,7 @@ namespace Learn03
                 {
                     if (status == Status.AddedRightBracket)
                     {
-                        result.Add('*');                        
+                        result.Add('*');                       
                     }   
                     else if(status == (Status.AddedLeftBracket | Status.AddedNegative))
                     {
@@ -120,11 +120,65 @@ namespace Learn03
                         status = Status.AddedNumber;
                     }
                 }
+                else if(i.GetType() == typeof(char))
+                {
+                    if((char)i == '-')
+                    {   
+                        if(status == Status.AddedNegative)
+                        {
+                            throw new Exception("Double negative");
+                        }
+                        status = Status.AddedNegative;
+                    }
+                    else if((char)i == '(')
+                    {
+                        if(status == Status.AddedNegative)
+                        {
+                            result.Add('-');
+                        }
+                        status = 0;
+                        status = Status.AddedLeftBracket;
+                        countLeftBreckets++;
+                        result.Add('(');
+                    }
+                    else if((char)i == ')')
+                    {
+                        if (status == Status.AddedNegative)
+                        {
+                            throw new Exception("-) negative right bracket");
+                        }
+                        else if(status == Status.AddedOperator)
+                        {
+                            throw new Exception("*+^ operator before right bracket");
+                        }
+                        status = 0;
+                        status = Status.AddedRightBracket;
+                        countRightBreckets++;
+                        result.Add(')');
+                    }
+                    else
+                    {
+                        if (status == Status.AddedLeftBracket)
+                        {
+                            throw new Exception("(+-*^ operator after right bracket");
+                        }
+                        status = 0;
+                        status = Status.AddedOperator;
+                        result.Add(i);
+                    }
+                }
+                {
+
+                }
 
                 result.Add(i);
             }
 
-            throw new Exception("zaglushka");
+            if (countLeftBreckets != countRightBreckets)
+            {
+                throw new Exception("countLeftBreckets != countRightBreckets");
+            }
+            return result;
         }
         
     }
