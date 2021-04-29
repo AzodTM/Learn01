@@ -9,12 +9,12 @@ namespace Learn03
         [Flags]
         public enum Status
         {
-            AddedNumber,
-            AddedOperator,
-            AddedNegative,
-            AddedRightBracket,
-            AddedLeftBracket,
-            AddedFunction
+            AddedNumber = 1,
+            AddedOperator = 2,
+            AddedNegative = 4,
+            AddedRightBracket = 8,
+            AddedLeftBracket = 16,
+            AddedFunction = 32
         }
         /// <summary>
         /// парсер строки на символы, цифры и функции
@@ -90,16 +90,16 @@ namespace Learn03
             {
                 if(i.GetType() == typeof(string) || i.GetType() == typeof(double))
                 {
-                    if (status == Status.AddedRightBracket)
+                    if ((status & Status.AddedRightBracket) == Status.AddedRightBracket)
                     {
                         result.Add('*');                       
                     }   
-                    else if(status == (Status.AddedLeftBracket | Status.AddedNegative))
+                    else if((status & (Status.AddedLeftBracket & Status.AddedNegative)) == (Status.AddedLeftBracket | Status.AddedNegative))
                     {
                         result.Add(-1);
                         result.Add('*');
                     }
-                    else if(status == Status.AddedNumber)
+                    else if((status & Status.AddedNumber) == Status.AddedNumber)
                     {
                         if(i.GetType() == typeof(double))
                         {
@@ -107,9 +107,13 @@ namespace Learn03
                         }
                         result.Add('*');
                     }
-                    else if(status == Status.AddedFunction && i.GetType() == typeof(string))
+                    else if((status & Status.AddedFunction) == Status.AddedFunction && i.GetType() == typeof(string))
                     {
                         throw new Exception("doble function");
+                    }
+                    else if((status & Status.AddedNegative) == Status.AddedNegative)
+                    {
+                        result.Add('-');
                     }
                     status = 0;
                     if (i.GetType() == typeof(string))
@@ -123,13 +127,26 @@ namespace Learn03
                 }
                 else if(i.GetType() == typeof(char))
                 {
-                    if((char)i == '-')
-                    {   
-                        if(status == Status.AddedNegative)
+                    if ((char)i == '=')
+                    {
+                        status = 0;
+                    }
+                    else if(status == Status.AddedOperator)
+                    {
+                        throw new Exception("Double operator");
+                    }
+                    else if ((char)i == '-')
+                    {
+                        if ((status | Status.AddedNegative) == Status.AddedNegative)
                         {
                             throw new Exception("Double negative");
+                        }                        
+                        else
+                        {
+                            status = Status.AddedNegative | Status.AddedOperator | (status & Status.AddedLeftBracket);
                         }
-                        status = Status.AddedNegative;
+                        
+                        continue;
                     }
                     else if((char)i == '(')
                     {
@@ -137,10 +154,13 @@ namespace Learn03
                         {
                             result.Add('-');
                         }
+                        else if(status == Status.AddedNumber)
+                        {
+                            result.Add('*');
+                        }    
                         status = 0;
                         status = Status.AddedLeftBracket;
                         countLeftBreckets++;
-                        result.Add('(');
                     }
                     else if((char)i == ')')
                     {
@@ -155,23 +175,20 @@ namespace Learn03
                         status = 0;
                         status = Status.AddedRightBracket;
                         countRightBreckets++;
-                        result.Add(')');
                     }
+                    
                     else
                     {
                         if (status == Status.AddedLeftBracket)
                         {
                             throw new Exception("(+-*^ operator after right bracket");
                         }
-                        status = 0;
-                        status = Status.AddedOperator;
-                        result.Add(i);
+                        
+                        status = Status.AddedOperator;                        
                     }
                 }
-                {
-
-                }
-
+               
+                
                 result.Add(i);
             }
 
@@ -179,6 +196,10 @@ namespace Learn03
             {
                 throw new Exception("countLeftBreckets != countRightBreckets");
             }
+            else if(status == Status.AddedOperator || status == Status.AddedNegative)
+                {
+                    throw new Exception("error at end expression");
+                }
             return result;
         }
         
