@@ -94,7 +94,7 @@ namespace Learn03
                     {
                         result.Add('*');                       
                     }   
-                    else if((status & (Status.AddedLeftBracket & Status.AddedNegative)) == (Status.AddedLeftBracket | Status.AddedNegative))
+                    else if((status & (Status.AddedLeftBracket | Status.AddedNegative)) == (Status.AddedLeftBracket | Status.AddedNegative))
                     {
                         result.Add(-1);
                         result.Add('*');
@@ -131,13 +131,13 @@ namespace Learn03
                     {
                         status = 0;
                     }
-                    else if(status == Status.AddedOperator)
+                    else if(status == Status.AddedOperator && ((char)i != '(' && (char)i != ')'))
                     {
                         throw new Exception("Double operator");
                     }
                     else if ((char)i == '-')
                     {
-                        if ((status | Status.AddedNegative) == Status.AddedNegative)
+                        if ((status & Status.AddedNegative) == Status.AddedNegative)
                         {
                             throw new Exception("Double negative");
                         }                        
@@ -150,15 +150,14 @@ namespace Learn03
                     }
                     else if((char)i == '(')
                     {
-                        if(status == Status.AddedNegative)
+                        if((status & Status.AddedNegative) == Status.AddedNegative)
                         {
                             result.Add('-');
                         }
-                        else if(status == Status.AddedNumber)
+                        else if((status & Status.AddedNumber) == Status.AddedNumber)
                         {
                             result.Add('*');
-                        }    
-                        status = 0;
+                        }  
                         status = Status.AddedLeftBracket;
                         countLeftBreckets++;
                     }
